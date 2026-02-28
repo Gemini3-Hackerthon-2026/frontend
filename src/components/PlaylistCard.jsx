@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import {motion, AnimatePresence, px} from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ListMusic, Calendar, Play, X } from 'lucide-react';
 import styles from './PlaylistCard.module.css';
 
 export default function PlaylistCard({ playlist, index }) {
     const [albumArts, setAlbumArts] = useState({});
-    // 모달 관련 상태
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSong, setSelectedSong] = useState(null);
+
+    const bgColor = playlist.background_color || '#1a1a2e';
+    const accentColor = playlist.accent_color || '#e94560';
 
     useEffect(() => {
         const fetchAlbumArts = async () => {
@@ -34,7 +36,6 @@ export default function PlaylistCard({ playlist, index }) {
         fetchAlbumArts();
     }, [playlist.songs]);
 
-    // 플랫폼별 검색 URL 생성 함수
     const getPlatformUrl = (platform, song) => {
         const query = encodeURIComponent(`${song.artist} ${song.title}`);
         switch (platform) {
@@ -50,15 +51,34 @@ export default function PlaylistCard({ playlist, index }) {
         setIsModalOpen(true);
     };
 
+    // 모바일 클릭 효과를 인지시키기 위한 딜레이 핸들러
+    const handlePlatformClick = (e, platform, song) => {
+        e.preventDefault();
+        const url = getPlatformUrl(platform, song);
+        setTimeout(() => {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }, 150);
+    };
+
     return (
         <motion.div
             className={styles.card}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            initial={{ opacity: 0, y: 20, background: '#121212' }}
+            animate={{
+                opacity: 1,
+                y: 0,
+                background: `linear-gradient(135deg, ${bgColor} 0%, #121212 100%)`,
+                borderColor: `${accentColor}4D`
+            }}
+            transition={{
+                delay: index * 0.1,
+                background: { duration: 0.8 }
+            }}
         >
             <div className={styles.header}>
-                <span className={styles.vibeTag}>{playlist.vibe}</span>
+                <span className={styles.vibeTag} style={{ backgroundColor: accentColor }}>
+                    {playlist.vibe}
+                </span>
                 <h3 className={styles.theme}>{playlist.theme}</h3>
             </div>
 
@@ -75,8 +95,13 @@ export default function PlaylistCard({ playlist, index }) {
                         const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=random`;
 
                         return (
-                            <motion.div key={i} className={styles.songItem}>
-                                <div className={styles.albumArtWrapper} onClick={() => openModal(song)}>
+                            <motion.div
+                                key={i}
+                                className={styles.songItem}
+                                style={{ border: `1px solid ${accentColor}26` }}
+                                onClick={() => openModal(song)}
+                            >
+                                <div className={styles.albumArtWrapper}>
                                     <img src={artwork} alt={song.title} className={styles.albumArt} />
                                     <div className={styles.playOverlay}>
                                         <Play size={20} fill="white" />
@@ -94,10 +119,9 @@ export default function PlaylistCard({ playlist, index }) {
                                             <Calendar size={12} />
                                             <span>{song.release_date || '2024'}</span>
                                         </div>
-                                        {/* 링크 아이콘 클릭 시 모달 오픈 */}
-                                        <button onClick={() => openModal(song)} className={styles.linkIconBtn}>
+                                        <div className={styles.linkIconBtn}>
                                             <ExternalLink size={14} />
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -106,7 +130,6 @@ export default function PlaylistCard({ playlist, index }) {
                 </div>
             </div>
 
-            {/* 플랫폼 선택 모달 */}
             <AnimatePresence>
                 {isModalOpen && selectedSong && (
                     <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
@@ -124,39 +147,24 @@ export default function PlaylistCard({ playlist, index }) {
                             <h4>어디에서 감상할까요?</h4>
                             <p className={styles.modalSongInfo}>{selectedSong.artist} - {selectedSong.title}</p>
 
-
                             <div className={styles.platformGrid}>
-                                <a href={getPlatformUrl('youtube', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
-                                    <div className={`${styles.iconBox} ${styles.youtube}`}>
-                                        <img src="https://simpleicons.org/icons/youtube.svg" alt="YouTube" className={styles.brandIcon} />
-                                    </div>
-                                    <span>YouTube</span>
-                                </a>
-
-                                <a href={getPlatformUrl('spotify', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
-                                    <div className={`${styles.iconBox} ${styles.spotify}`}>
-                                        <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify" className={styles.brandIcon} />
-                                    </div>
-                                    <span>Spotify</span>
-                                </a>
-
-                                <a href={getPlatformUrl('melon', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
-                                    <div className={`${styles.iconBox} ${styles.melon}`}>
-                                        <img src="/images/Frame%201-3.svg"
-                                            alt="Melon"
-                                            className={`${styles.brandIcon} ${styles.melonIcon}`}/>
-                                    </div>
-                                    <span>Melon</span>
-                                </a>
+                                {['youtube', 'spotify', 'melon'].map((platform) => (
+                                    <a
+                                        key={platform}
+                                        href={getPlatformUrl(platform, selectedSong)}
+                                        className={styles.platformItem}
+                                        onClick={(e) => handlePlatformClick(e, platform, selectedSong)}
+                                    >
+                                        <div className={`${styles.iconBox} ${styles[platform]}`}>
+                                            <img
+                                                src={platform === 'melon' ? "/images/Frame%201-3.svg" : `https://simpleicons.org/icons/${platform}.svg`}
+                                                alt={platform}
+                                                className={`${styles.brandIcon} ${platform === 'melon' ? styles.melonIcon : ''}`}
+                                            />
+                                        </div>
+                                        <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+                                    </a>
+                                ))}
                             </div>
                         </motion.div>
                     </div>

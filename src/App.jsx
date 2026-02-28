@@ -76,7 +76,7 @@ export default function App() {
             setPhase('result');
         } catch (err) {
             setError(err.message || '오류가 발생했어요. 다시 시도해주세요.');
-            setPhase('input'); // 에러 발생 시 입력 단계로 복귀
+            setPhase('input');
         } finally {
             setLoading(false);
         }
@@ -186,14 +186,12 @@ export default function App() {
                     </motion.div>
                 )}
 
-                {/* ── LOADING PHASE ── */}
                 {phase === 'loading' && (
                     <motion.div key="loading" className={styles.loadingPhase}>
                         <Loading />
                     </motion.div>
                 )}
 
-                {/* ── RESULT PHASE ── */}
                 {phase === 'result' && result && (
                     <motion.div
                         key="result"
@@ -217,23 +215,30 @@ export default function App() {
 
                                 <div className={styles.resetIconWrapper}
                                      onClick={handleSubmit}
-                                     title="이 기분으로 다시 추천받기">
-                                    <RotateCcw size={20} className={styles.resetIcon}/>
+                                     title="새로고침">
+                                    <RotateCcw size={18}
+                                               strokeWidth={2}
+                                               className={styles.resetIcon}/>
                                 </div>
                             </div>
 
-                            <div className={styles.emotionTags}>
-                                {result.emotion_tags?.map((tag, i) => (
-                                    <span key={i} className={styles.emotionTag}>{tag}</span>
-                                ))}
-                            </div>
+                            <div className={styles.resultSubTitle}>
+                                <div className={styles.emotionTags}>
+                                    {result.emotion_tags?.map((tag, i) => (
+                                        <span key={i} className={styles.emotionTag}>{tag}</span>
+                                    ))}
+                                </div>
 
-                            <p className={styles.inputPreview} onClick={handleReset} title="수정하러 가기">
-                                <span className={styles.inputQuote}>"</span>
-                                {input}
-                                <span className={styles.inputQuote}>"</span>
-                                <span className={styles.editHint}>(수정하기)</span>
-                            </p>
+                                <p className={styles.inputPreview}>
+                                    <span className={styles.inputQuote}>"</span>
+                                    {input}
+                                    <span className={styles.inputQuote}>"</span>
+                                </p>
+                                <button type={"button"} onClick={handleReset} className={styles.backToMain}>
+                                    다른 기분 입력하기
+                                </button>
+
+                            </div>
                         </motion.div>
 
                         <div className={styles.singleCardContainer}>
