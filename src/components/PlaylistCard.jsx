@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import {motion, AnimatePresence, px} from 'framer-motion';
 import { ExternalLink, ListMusic, Calendar, Play, X } from 'lucide-react';
 import styles from './PlaylistCard.module.css';
 
@@ -119,9 +119,6 @@ export default function PlaylistCard({ playlist, index }) {
                                             <Calendar size={12} />
                                             <span>{song.release_date || '2024'}</span>
                                         </div>
-                                        <div className={styles.linkIconBtn}>
-                                            <ExternalLink size={14} />
-                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -130,6 +127,7 @@ export default function PlaylistCard({ playlist, index }) {
                 </div>
             </div>
 
+            {/* 플랫폼 선택 모달 */}
             <AnimatePresence>
                 {isModalOpen && selectedSong && (
                     <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
@@ -147,24 +145,39 @@ export default function PlaylistCard({ playlist, index }) {
                             <h4>어디에서 감상할까요?</h4>
                             <p className={styles.modalSongInfo}>{selectedSong.artist} - {selectedSong.title}</p>
 
+
                             <div className={styles.platformGrid}>
-                                {['youtube', 'spotify', 'melon'].map((platform) => (
-                                    <a
-                                        key={platform}
-                                        href={getPlatformUrl(platform, selectedSong)}
-                                        className={styles.platformItem}
-                                        onClick={(e) => handlePlatformClick(e, platform, selectedSong)}
-                                    >
-                                        <div className={`${styles.iconBox} ${styles[platform]}`}>
-                                            <img
-                                                src={platform === 'melon' ? "/images/Frame%201-3.svg" : `https://simpleicons.org/icons/${platform}.svg`}
-                                                alt={platform}
-                                                className={`${styles.brandIcon} ${platform === 'melon' ? styles.melonIcon : ''}`}
-                                            />
-                                        </div>
-                                        <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
-                                    </a>
-                                ))}
+                                <a href={getPlatformUrl('youtube', selectedSong)}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.youtube}`}>
+                                        <img src="https://simpleicons.org/icons/youtube.svg" alt="YouTube" className={styles.brandIcon} />
+                                    </div>
+                                    <span>YouTube</span>
+                                </a>
+
+                                <a href={getPlatformUrl('spotify', selectedSong)}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.spotify}`}>
+                                        <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify" className={styles.brandIcon} />
+                                    </div>
+                                    <span>Spotify</span>
+                                </a>
+
+                                <a href={getPlatformUrl('melon', selectedSong)}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.melon}`}>
+                                        <img src="/images/Frame%201-3.svg"
+                                            alt="Melon"
+                                            className={`${styles.brandIcon} ${styles.melonIcon}`}/>
+                                    </div>
+                                    <span>Melon</span>
+                                </a>
                             </div>
                         </motion.div>
                     </div>
