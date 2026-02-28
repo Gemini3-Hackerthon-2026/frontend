@@ -200,12 +200,14 @@ export default function App() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                        <motion.div
-                            className={styles.resultHeader}
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                        >
-                            <div className={styles.logo} style={{ marginBottom: '1.5rem' }}>MOODTUNE</div>
+                        <motion.div className={styles.resultHeader}
+                                    initial={{ opacity: 0, y: -20 }}
+                                    animate={{ opacity: 1, y: 0 }}>
+                            <div className={styles.logo}
+                                 style={{ marginBottom: '1.5rem', cursor: 'pointer' }}
+                                 onClick={handleReset}>
+                                MOODTUNE
+                            </div>
 
                             <div className={styles.emotionSummaryBox}>
                                 <div className={styles.leftContent}>
