@@ -1,0 +1,90 @@
+.card {
+    background: #1a1a1a;
+    border-radius: 16px;
+    padding: 24px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.songGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.songItem {
+    display: flex;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 8px;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.albumArtWrapper {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.albumArt {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.playOverlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: 4px;
+}
+
+.albumArtWrapper:hover .playOverlay {
+    opacity: 1;
+}
+
+.songDetails {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.songTitle {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.artistName {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.songFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.releaseDate {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.linkIcon {
+    color: #ff4b4b;
+}
