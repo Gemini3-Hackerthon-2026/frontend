@@ -7,12 +7,54 @@ import Loading from './components/Loading.jsx';
 import styles from './App.module.css';
 
 const QUICK_TAGS = [
-    { label: '😊 설렘', value: '오늘 왠지 기분이 설레고 두근거려' },
-    { label: '😢 위로받고 싶어', value: '힘든 하루였어, 위로가 필요해' },
-    { label: '⚡ 에너지 충전', value: '지금 당장 신나는 음악이 듣고 싶어' },
-    { label: '🌙 새벽감성', value: '새벽에 혼자 있는데 감성적인 기분이야' },
-    { label: '☔ 비오는 날', value: '비가 내리는데 창밖을 보며 멍때리고 있어' },
-    { label: '💪 집중모드', value: '공부하거나 일할 때 집중되는 음악 필요해' },
+    {
+        label: '😊 설렘',
+        value: [
+            '오늘 왠지 기분이 설레고 두근거려',
+            '좋아하는 사람과 연락하는 듯한 두근거림',
+            '소개팅 가기 전, 설레는 마음을 더해줄 노래'
+        ]
+    },
+    {
+        label: '😢 위로받고 싶어',
+        value: [
+            '힘든 하루였어, 따뜻한 위로가 필요해',
+            '지친 마음을 달래줄 포근한 노래 들려줘',
+            '오늘 하루 너무 고생한 나에게 주는 선물'
+        ]
+    },
+    {
+        label: '⚡ 에너지 충전',
+        value: [
+            '지금 당장 텐션 올릴 신나는 음악이 필요해',
+            '지루한 오후를 깨워줄 강력한 에너지가 필요해',
+            '운동할 때 듣기 좋은 신나는 K-POP 플레이리스트'
+        ]
+    },
+    {
+        label: '🌙 새벽감성',
+        value: [
+            '새벽에 혼자 있는데 감성적인 기분이야',
+            '조용한 밤, 깊은 생각에 잠기게 하는 노래',
+            '잠들기 전 마음이 차분해지는 플레이리스트'
+        ]
+    },
+    {
+        label: '☔ 비오는 날',
+        value: [
+            '비가 내리는데 창밖을 보며 멍때리고 있어',
+            '빗소리와 잘 어울리는 잔잔한 노래',
+            '비 오는 날의 쓸쓸함과 차분함을 채워줄 음악'
+        ]
+    },
+    {
+        label: '💪 집중모드',
+        value: [
+            '공부하거나 일할 때 집중력을 높여줄 음악',
+            '가사 없는 연주곡이나 차분한 비트가 필요해',
+            '방해받지 않고 작업에 몰입하고 싶어'
+        ]
+    },
 ];
 
 export default function App() {
@@ -34,7 +76,7 @@ export default function App() {
             setPhase('result');
         } catch (err) {
             setError(err.message || '오류가 발생했어요. 다시 시도해주세요.');
-            setPhase('input');
+            setPhase('input'); // 에러 발생 시 입력 단계로 복귀
         } finally {
             setLoading(false);
         }
@@ -47,8 +89,14 @@ export default function App() {
         setPhase('input');
     }
 
-    function handleQuickTag(value) {
-        setInput(value);
+    // 랜덤 로직이 추가된 태그 핸들러
+    function handleQuickTag(values) {
+        if (Array.isArray(values)) {
+            const randomIndex = Math.floor(Math.random() * values.length);
+            setInput(values[randomIndex]);
+        } else {
+            setInput(values);
+        }
     }
 
     function handleKeyDown(e) {
@@ -138,12 +186,14 @@ export default function App() {
                     </motion.div>
                 )}
 
+                {/* ── LOADING PHASE ── */}
                 {phase === 'loading' && (
                     <motion.div key="loading" className={styles.loadingPhase}>
                         <Loading />
                     </motion.div>
                 )}
 
+                {/* ── RESULT PHASE ── */}
                 {phase === 'result' && result && (
                     <motion.div
                         key="result"
@@ -167,10 +217,8 @@ export default function App() {
 
                                 <div className={styles.resetIconWrapper}
                                      onClick={handleSubmit}
-                                     title="새로고침">
-                                    <RotateCcw size={22}
-                                               strokeWidth={10}
-                                               className={styles.resetIcon}/>
+                                     title="이 기분으로 다시 추천받기">
+                                    <RotateCcw size={20} className={styles.resetIcon}/>
                                 </div>
                             </div>
 
@@ -180,11 +228,11 @@ export default function App() {
                                 ))}
                             </div>
 
-                            <p className={styles.inputPreview} onClick={handleReset} style={{ cursor: 'pointer' }}>
+                            <p className={styles.inputPreview} onClick={handleReset} title="수정하러 가기">
                                 <span className={styles.inputQuote}>"</span>
                                 {input}
                                 <span className={styles.inputQuote}>"</span>
-                                <span style={{ fontSize: '0.8rem', marginLeft: '8px', opacity: 0.6 }}>(수정하기)</span>
+                                <span className={styles.editHint}>(수정하기)</span>
                             </p>
                         </motion.div>
 
